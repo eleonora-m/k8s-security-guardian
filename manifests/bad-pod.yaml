@@ -9,4 +9,4 @@ spec:
     image: ubuntu
     command: ["sleep", "3600"]
     securityContext:
-      privileged: true  # 🚨 ВОТ ОНА, ДЫРА!
+      privileged: true  # 🚨 !

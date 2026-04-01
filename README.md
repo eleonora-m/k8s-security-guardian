@@ -19,6 +19,7 @@ This project demonstrates a production-grade, security-first approach to Kuberne
 * `/ansible` - Infrastructure bootstrapping and OS-level compliance.
 * `/manifests` - K8s YAMLs for strict RBAC, Namespaces, and Network Policies.
 * `/src` - Custom Python (FastAPI) security dashboard connecting to K8s API.
+* `/tests` - Unit tests for security analysis functions.
 
 ## 🚀 Quick Start
 
@@ -26,6 +27,17 @@ This project demonstrates a production-grade, security-first approach to Kuberne
 - Python 3.8+
 - Kubernetes cluster access (kubeconfig configured)
 - Ansible (for infrastructure provisioning)
+
+### Infrastructure Setup (Ansible)
+```bash
+cd ansible
+
+# Edit inventory.ini with your node IPs
+vim inventory.ini
+
+# Run the preparation playbook
+ansible-playbook -i inventory.ini playbook.yml
+```
 
 ### Installation
 ```bash
