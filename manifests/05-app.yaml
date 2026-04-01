@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: security-dashboard
+  namespace: security-guardian
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: security-dashboard
+  template:
+    metadata:
+      labels:
+        app: security-dashboard
+    spec:
+      serviceAccountName: security-api-sa
+      containers:
+      - name: api
+        image: python:3.9-slim
+        command: ["sleep", "3600"] # Заглушка для MVP
