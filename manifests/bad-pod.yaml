@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hacker-pod
+  namespace: default
+spec:
+  containers:
+  - name: evil-container
+    image: ubuntu
+    command: ["sleep", "3600"]
+    securityContext:
+      privileged: true  # 🚨 ВОТ ОНА, ДЫРА!

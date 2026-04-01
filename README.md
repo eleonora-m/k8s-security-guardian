@@ -42,6 +42,21 @@ pip install -r requirements.txt
 uvicorn src.main:app --reload
 ```
 
+### Automated Deployment & Testing
+Use the provided `deploy.sh` script for automated deployment and verification:
+
+```bash
+# Make script executable and run
+chmod +x deploy.sh
+./deploy.sh
+```
+
+The script will:
+1. Apply all Kubernetes manifests
+2. Validate resource creation
+3. Start the security API server
+4. Run smoke tests on all endpoints
+
 ### API Endpoints
 - `GET /` - Health check
 - `GET /api/v1/security/privileged-pods` - List privileged pods
@@ -50,6 +65,59 @@ uvicorn src.main:app --reload
 ### Testing
 ```bash
 python3 tests/test_security.py
+```
+
+## 🔍 Security Analysis Demo
+
+### 1. Deploy Security Manifests
+```bash
+kubectl apply -f manifests/
+```
+
+### 2. Create a Vulnerable Pod (For Testing)
+```bash
+kubectl apply -f manifests/bad-pod.yaml
+```
+
+### 3. Run Security Analysis
+```bash
+# Start API server
+uvicorn src.main:app --host 0.0.0.0 --port 8000
+
+# Check for privileged pods (in another terminal)
+curl http://localhost:8000/api/v1/security/privileged-pods
+```
+
+**Expected Output:**
+```json
+{
+  "alert_level": "HIGH",
+  "findings": [
+    {
+      "namespace": "default",
+      "pod_name": "hacker-pod",
+      "container": "evil-container"
+    }
+  ]
+}
+```
+
+### 4. Check RBAC Analysis
+```bash
+curl http://localhost:8000/api/v1/security/cluster-admins
+```
+
+**Expected Output:**
+```json
+{
+  "alert_level": "CRITICAL", 
+  "findings": [
+    {
+      "kind": "Group",
+      "name": "system:masters"
+    }
+  ]
+}
 ```
 
 ## 🛠 Development
@@ -61,6 +129,29 @@ For testing without a real cluster, you can use Minikube or Kind.
 minikube start
 # Configure kubeconfig to point to minikube
 uvicorn src.main:app --reload
+```
+
+## 🔧 Troubleshooting
+
+### PodSecurity Violations
+If you encounter PodSecurity admission errors:
+```bash
+kubectl describe pod <pod-name> -n security-guardian
+```
+Common fixes:
+- Add `seccompProfile: { type: RuntimeDefault }` to securityContext
+- Ensure `runAsNonRoot: true` and `runAsUser` is set
+- Drop unnecessary capabilities
+
+### API Connection Issues
+- Verify kubeconfig: `kubectl cluster-info`
+- Check service account permissions: `kubectl auth can-i list pods --as=system:serviceaccount:security-guardian:security-analyzer`
+
+### Port Already in Use
+If port 8000 is busy:
+```bash
+lsof -i :8000
+uvicorn src.main:app --host 0.0.0.0 --port 8080
 ```
 
 ---
