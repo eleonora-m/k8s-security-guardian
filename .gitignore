@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+env/
+.env
+
+# Kubernetes & Security Secrets
+*.secret.yaml
+kubeconfig
+*.key
+*.crt
+*.pem

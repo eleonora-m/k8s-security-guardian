@@ -1,0 +1,18 @@
+---
+- name: Prepare Bare-Metal Nodes for Kubernetes
+  hosts: all
+  become: yes
+  tasks:
+    - name: Disable SWAP (Kubelet requirement)
+      command: swapoff -a
+
+    - name: Remove SWAP from fstab
+      replace:
+        path: /etc/fstab
+        regexp: '^([^#].*?\sswap\s+sw\s+.*)$'
+        replace: '# \1'
+
+    - name: Load br_netfilter kernel module
+      modprobe:
+        name: br_netfilter
+        state: present
