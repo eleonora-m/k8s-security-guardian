@@ -14,7 +14,18 @@ spec:
         app: security-dashboard
     spec:
       serviceAccountName: security-api-sa
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
       - name: api
         image: python:3.9-slim
-        command: ["sleep", "3600"] # Заглушка для MVP
+        command: ["sleep", "3600"]
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - ALL

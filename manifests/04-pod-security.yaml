@@ -4,11 +4,12 @@ metadata:
   name: secure-test-pod
   namespace: security-guardian
 spec:
-  # Запрещаем запускать контейнер от имени суперпользователя (root)
   securityContext:
     runAsNonRoot: true
     runAsUser: 1000
     fsGroup: 2000
+    seccompProfile:
+      type: RuntimeDefault
   containers:
   - name: secure-container
     image: nginx:alpine
